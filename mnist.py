@@ -1,8 +1,9 @@
 #! /usr/bin/python
 import numpy as np
 import tensorflow as tf
+from data_reader import *
 
-class mnist(object):
+class mnist(data_reader):
         """ mnist data reader """
 
         def __init__(self,imgs,labels,checkpoints):
@@ -70,3 +71,11 @@ class mnist(object):
             return v
 
 
+
+
+if __name__ == '__main__':
+    print("#"*30)
+    m = mnist("/home/lr/workspace/python/ai/data/t10k-images.idx3-ubyte","/home/lr/workspace/python/ai/data/t10k-labels.idx1-ubyte","/home/lr/workspace/python/ai/model/mnist_nn_cos/model.ckpt")
+    m.open()
+    print(m.has())
+    m.close()

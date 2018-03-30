@@ -12,7 +12,7 @@ class mnist_cnn(model_base):
         self.base.__init__(reader)
 
     def decl_model(self):
-        batch = 100
+        batch = 50
         x = self.decl_placeholder("x",[None,784])
         y_ = self.decl_placeholder("y_",[None,10])
         x1 = tf.reshape(x,[batch,28,28,1])
@@ -20,15 +20,14 @@ class mnist_cnn(model_base):
         p1 = self.decl_max_pool("max_pool1",c1)
         c2 = self.decl_conv2d_layer("c2",p1,[5,5,32,64],[64])
         p2 = self.decl_max_pool("max_pool2",c2)
-        
         flat = tf.reshape(p2,[-1,7 * 7 * 64])
-        dense = self.decl_dense_layer("dense",flat,1024)
+        dense = self.decl_full_conn_layer("dense",flat,[7 * 7 * 64,1024],[1024])
         dropout = self.decl_drop_out_layer(dense,0.4,"dropout")
         loss = self.decl_full_conn_softmax_crossentry_layer("fc2",dropout,[1024,10],[10],y_)
-        return batch,loss,x,y_
+        return batch,loss,x,y_,tf.train.AdamOptimizer(1e-4)
 
 if __name__ == "__main__":
     print("#"*30)
     m = mnist.mnist("/home/lr/workspace/python/ai/data/train-images.idx3-ubyte","/home/lr/workspace/python/ai/data/train-labels.idx1-ubyte","/home/lr/workspace/python/ai/model/mnist_cnn/model.ckpt")
     model = mnist_cnn(m)
-    model.plot(model.train(1,0.001),"count","loss")
+    model.plot(model.train(20,0.001),"count","loss")

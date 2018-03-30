@@ -23,7 +23,7 @@ class mnist_cnn_2(model_base):
         flat = tf.reshape(p2,[-1,7 * 7 * 64])
         dense = self.decl_dense_layer("dense",flat,1024)
         loss = self.decl_full_conn_softmax_crossentry_layer("fc2",dense,[1024,10],[10],y_)
-        return batch,loss,x,y_
+        return batch,loss,x,y_,None
 
 if __name__ == "__main__":
     print("#"*30)

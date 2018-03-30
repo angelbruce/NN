@@ -26,7 +26,7 @@ class mnist_cnn_1(model_base):
 
         loss = self.decl_full_conn_softmax_crossentry_layer("fc",dropout,[1024,10],[10],y_)
        
-        return batch,loss,x,y_
+        return batch,loss,x,y_,None
 
 if __name__ == "__main__":
     print("#"*30)

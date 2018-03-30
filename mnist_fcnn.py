@@ -18,28 +18,18 @@ class mnist_fcnn(model_base):
         x1 = tf.reshape(x,[batch,28,28,1])
         c1 = self.decl_conv2d_layer("c1",x1,[3,3,1,2],[2])
         a1 = self.decl_avg_pool("ap1",c1)
-        print(a1)
-
         c2 = self.decl_conv2d_layer("c2",a1,[2,2,2,4],[4])
         a2 = self.decl_avg_pool("ap2",c2)
-        print(a2)
-
         c3 = self.decl_conv2d_layer("c2",a2,[3,3,4,6],[6])
         a3 = self.decl_avg_pool("ap3",c3)
-        print(a3)
-
         c4 = self.decl_conv2d_layer("c4",a3,[2,2,6,10],[10])
         a4 = self.decl_avg_pool("ap4",c4)
-
         z = tf.reshape(a4,[-1,10])
-        print(z)
         tf.summary.histogram("z",z)
-       
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=z,labels=y_)) 
-
         tf.summary.scalar("loss",loss)
 
-        return batch,loss,x,y_
+        return batch,loss,x,y_,None
 
 if __name__ == "__main__":
     print("#"*30)

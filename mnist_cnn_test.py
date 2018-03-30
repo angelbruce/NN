@@ -12,6 +12,7 @@ class mnist_cnn_test(check_base):
         self.base.__init__(reader)
 
     def decl_predict(self):
+        batch = 1
         x = self.decl_placeholder("x",[None,784])
         y_ = self.decl_placeholder("y_",[None,10])
         x1 = tf.reshape(x,[-1,28,28,1])
@@ -20,9 +21,8 @@ class mnist_cnn_test(check_base):
         c2 = self.decl_conv2d_layer("c2",p1,[5,5,32,64],[64])
         p2 = self.decl_max_pool("max_pool2",c2)
         flat = tf.reshape(p2,[-1,7 * 7 * 64])
-        dense = self.decl_dense_layer("dense",flat,1024)
-        dropout = self.decl_drop_out_layer(dense,0.4,"dropout")
-        y = self.decl_full_conn_softmax_layer("fc2",dropout,[1024,10],[10])
+        dense = self.decl_full_conn_layer("dense",flat,[7 * 7 * 64,1024],[1024])
+        y = self.decl_full_conn_softmax_layer("fc2",dense,[1024,10],[10])
         return 1,y,x,y_
 
 if __name__ == "__main__":

@@ -27,9 +27,9 @@ class nn_base(object):
             y = tf.nn.relu(z)
             m = tf.nn.max_pool(y,ksize=[1,2,2,1],strides=[1,1,1,1],padding = 'SAME')
 
-            tf.summary.histogram(name + "/conv2d",z)
-            tf.summary.histogram(name + "/relu",y)
-            tf.summary.histogram(name + "/max_pool",m)
+            tf.summary.histogram("conv2d",z)
+            tf.summary.histogram("relu",y)
+            tf.summary.histogram("max_pool",m)
 
             return m
 
@@ -40,8 +40,8 @@ class nn_base(object):
             z = tf.nn.conv2d(x,w,strides,padding) + b
             y = tf.nn.relu(z)
 
-            tf.summary.histogram(name + "/conv2d",z)
-            tf.summary.histogram(name + "/relu",y)
+            tf.summary.histogram("conv2d",z)
+            tf.summary.histogram("relu",y)
 
             return y
 
@@ -53,8 +53,8 @@ class nn_base(object):
             z = tf.matmul(x,w) + b
             y = tf.nn.relu(z)
 
-            tf.summary.histogram(name + "/matmul",z)
-            tf.summary.histogram(name + "/relu",y)
+            tf.summary.histogram("matmul",z)
+            tf.summary.histogram("relu",y)
 
             return y
 
@@ -65,8 +65,8 @@ class nn_base(object):
             z = tf.matmul(x,w) + b
             y = tf.nn.softmax(z)
 
-            tf.summary.histogram(name + "/matmul",z)
-            tf.summary.histogram(name + "/softmax",y)
+            tf.summary.histogram("matmul",z)
+            tf.summary.histogram("softmax",y)
 
             return y
 
@@ -75,12 +75,12 @@ class nn_base(object):
             w = self.decl_weight(weight_shape)
             b = self.decl_bias(bias_shape)
             z = tf.matmul(x,w) + b
-            per_loss = tf.nn.softmax_cross_entropy_with_logits(logits=z, labels=y_,name=name+"_per_crossentry")
+            per_loss = tf.nn.softmax_cross_entropy_with_logits_v2(logits=z, labels=y_,name=name+"_per_crossentry")
             loss = tf.reduce_mean(per_loss)
 
-            tf.summary.histogram(name + "/matmul",z)
-            tf.summary.histogram(name + "/per_loss",per_loss)
-            tf.summary.histogram(name + "/loss",loss)
+            tf.summary.histogram("matmul",z)
+            tf.summary.histogram("per_loss",per_loss)
+            tf.summary.histogram("loss",loss)
 
 
             return loss
@@ -88,23 +88,23 @@ class nn_base(object):
     def decl_avg_pool(self,name,x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='VALID'):
         with tf.name_scope(name):
             ap = tf.nn.avg_pool(x,ksize,strides,padding)
-            tf.summary.histogram(name + "/avg_pool",ap)
+            tf.summary.histogram("avg_pool",ap)
             return ap       
 
     def decl_max_pool(self,name,x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='VALID'):
         with tf.name_scope(name):
             ap = tf.nn.max_pool(x,ksize,strides,padding)
-            tf.summary.histogram(name + "/max_pool",ap)
+            tf.summary.histogram("max_pool",ap)
             return ap            
      
 
     def decl_drop_out_layer(self,x, keep_prob, name):
         dp = tf.nn.dropout(x,keep_prob,name=name)
-        tf.summary.histogram(name + "/drop_out",dp)
+        tf.summary.histogram("drop_out",dp)
         return dp
 
 
     def decl_dense_layer(self,name,x,units,activation=tf.nn.relu,use_bias=True):
         dl = tf.layers.dense(x,units,activation,use_bias,name=name)
-        tf.summary.histogram(name + "/dense",dl)
+        tf.summary.histogram("dense",dl)
         return dl

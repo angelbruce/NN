@@ -17,13 +17,11 @@ class check_base(model_base):
         with tf.Session() as sess:
             merge_op = tf.summary.merge_all()
             batch,y,x,y_ = self.decl_predict()
-            tf.initialize_all_variables()
+            sess.run(tf.global_variables_initializer())
             saver = tf.train.Saver()
             segs = os.path.split(self.reader.checkpoints)
             ckpt = tf.train.get_checkpoint_state(segs[0])
-
             writer = tf.summary.FileWriter(segs[0],sess.graph)
-
             saver.restore(sess,ckpt.model_checkpoint_path)
             m = self.reader
             m.open()

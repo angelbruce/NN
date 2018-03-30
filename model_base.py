@@ -16,15 +16,17 @@ class model_base(nn_base):
 
     def train(self,epoch=1,learn_rate=0.001,log_dir=""):
         self.learn_rate = learn_rate
-        batch,loss,x,y_ = self.decl_model()
+        batch,loss,x,y_,optimizer = self.decl_model()
         self.epoch = epoch
-        summary = self.train_model(batch,loss,x,y_)
+        summary = self.train_model(batch,loss,x,y_,optimizer)
         return summary
 
-    def train_model(self,batch,loss,x_feed,y_feed,save_mod=10):
+    def train_model(self,batch,loss,x_feed,y_feed,optimizer,save_mod=10):
         summary = []
         # train_steps = tf.train.GradientDescentOptimizer(self.learn_rate).minimize(loss)
-        train_steps = tf.train.RMSPropOptimizer(self.learn_rate).minimize(loss)
+        if optimizer ==  None:
+            optimizer = tf.train.RMSPropOptimizer(self.learn_rate)
+        train_steps = optimizer.minimize(loss)
         with tf.Session() as sess:
             merge_op = tf.summary.merge_all()
             segs = os.path.split(self.reader.checkpoints)
@@ -33,7 +35,7 @@ class model_base(nn_base):
 
             m = self.reader
             print("initialize all variables")
-            init = tf.initialize_all_variables()
+            init = tf.global_variables_initializer()
             sess.run(init)
             count = 0
             e = 0
