@@ -19,7 +19,6 @@ class mnist_nn_test(check_base):
         p = tf.nn.softmax(h1)
         return 1,p,x, y_
 
-
 if __name__ == "__main__":
     print("#"*30)
     m = mnist.mnist("/home/lr/workspace/python/ai/data/t10k-images.idx3-ubyte","/home/lr/workspace/python/ai/data/t10k-labels.idx1-ubyte","/home/lr/workspace/python/ai/model/mnist_nn/model.ckpt")

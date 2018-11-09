@@ -7,6 +7,13 @@ class nn_base(object):
         v = tf.placeholder(tf.float32,shape,name)
         return v
     
+    def decl_Var(self,name,shape,mean=0.0,stdv=0.1): 
+        init = tf.truncated_normal(shape,mean=0.0,stddev=0.1)
+        var = tf.Variable(init,name=name)
+        tf.summary.histogram(name,var)
+
+        return var
+
     def decl_weight(self,shape):
         init = tf.truncated_normal(shape,mean=0.0, stddev=0.1)
         weight = tf.Variable(init,name="W")
@@ -37,26 +44,30 @@ class nn_base(object):
         with tf.name_scope(name):
             w = self.decl_weight(weight_shape)
             b = self.decl_bias(bias_shape)
-            z = tf.nn.conv2d(x,w,strides,padding) + b
+            z = tf.nn.bias_add(tf.nn.conv2d(x,w,strides,padding), b)
             y = tf.nn.relu(z)
 
             tf.summary.histogram("conv2d",z)
             tf.summary.histogram("relu",y)
 
             return y
+        
 
-
-    def decl_full_conn_layer(self,name,x,weight_shape,bias_shape):
+    def decl_full_conn_layer(self,name,x,weight_shape,bias_shape,isActive=True):
         with tf.name_scope(name):
             w = self.decl_weight(weight_shape)
             b = self.decl_bias(bias_shape)
             z = tf.matmul(x,w) + b
-            y = tf.nn.relu(z)
-
             tf.summary.histogram("matmul",z)
-            tf.summary.histogram("relu",y)
 
-            return y
+            if not isActive :
+                return z
+
+            else:
+                y = tf.nn.relu(z)
+                tf.summary.histogram("relu",y)
+
+                return y
 
     def decl_full_conn_softmax_layer(self,name,x,weight_shape,bias_shape):
         with tf.name_scope(name):
@@ -84,6 +95,15 @@ class nn_base(object):
 
 
             return loss
+
+    def decl_softmax_corssentry_loss(self,logits,labels) :
+        per_loss = tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits,labels=labels,name="per_loss")
+        loss = tf.reduce_mean(per_loss)
+
+        tf.summary.histogram("per_loss",per_loss)
+        tf.summary.histogram("loss",loss)
+
+        return loss
 
     def decl_avg_pool(self,name,x,ksize=[1,2,2,1],strides=[1,2,2,1],padding='VALID'):
         with tf.name_scope(name):
