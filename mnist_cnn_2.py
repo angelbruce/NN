@@ -3,35 +3,32 @@
 import tensorflow as tf
 import numpy as np
 from model_base import *
-import mnist
+from config import *
 
 class mnist_cnn_2(model_base):
 
-    def __init__(self,reader):
+    def __init__(self,reader,batch=100):
         self.base =  super(mnist_cnn_2,self)
         self.base.__init__(reader)
+        self.batch=batch
 
     def decl_model(self):
-        batch = 100
-        x = self.decl_placeholder("x",[None,784])
-        y_ = self.decl_placeholder("y_",[None,10])
-        x1 = tf.reshape(x,[batch,28,28,1])
-        print("x1",x1)
-        c1 = self.decl_conv2d_layer("c1",x1,[5,5,1,32],[32])
-        print("c1",c1)
-        p1 = self.decl_max_pool("max_pool1",c1)
-        print("p1",p1)
-        c2 = self.decl_conv2d_layer("c2",p1,[5,5,32,64],[64])
-        print("c2",c2)
-        p2 = self.decl_max_pool("max_pool2",c2)
-        print("p2",p2)
-        flat = tf.reshape(p2,[-1,7 * 7 * 64])
-        dense = self.decl_dense_layer("dense",flat,1024)
-        loss = self.decl_full_conn_softmax_crossentry_layer("fc2",dense,[1024,10],[10],y_)
-        return batch,loss,x,y_,None
+        x = self.placeholder("x",[None,784])
+        y_ = self.placeholder("y_",[None,10])
+        net = tf.reshape(x,[-1,28,28,1])
+        net = self.conv2d(net,[3,3],32)
+        net = self.sub_sample(net)
+        net = self.conv2d(net,[3,3],64)
+        net = self.sub_sample(net)
+        net = self.flat(net)
+        net = self.linear(net,512)
+        y = self.linear(net,10,is_active=False)
+
+        loss = self.decl_softmax_corssentry_loss(y,y_)
+        return self.batch,loss,x,y_,y,tf.train.AdamOptimizer()
 
 if __name__ == "__main__":
     print("#"*30)
-    m = mnist.mnist("/home/lr/workspace/python/ai/data/train-images.idx3-ubyte","/home/lr/workspace/python/ai/data/train-labels.idx1-ubyte","/home/lr/workspace/python/ai/model/mnist_cnn_2/model.ckpt")
+    m =  config.mnist_train_reader('mnist_cnn_2')
     model = mnist_cnn_2(m)
     model.plot(model.train(1,0.001),"count","loss")

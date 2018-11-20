@@ -23,9 +23,9 @@ class model_base(nn_base):
 
     def train_model(self,batch,loss,x_feed,y_feed,y,optimizer,save_mod=10):
         summary = []
-        # train_steps = tf.train.GradientDescentOptimizer(self.learn_rate).minimize(loss)
         if optimizer ==  None:
             optimizer = tf.train.RMSPropOptimizer(self.learn_rate)
+            
         train_steps = optimizer.minimize(loss)
         with tf.Session() as sess:
             merge_op = tf.summary.merge_all()
