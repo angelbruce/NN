@@ -1,0 +1,7 @@
+nn_base.pyc
+model_base.pyc
+mnist.pyc
+config.pyc
+data_reader.pyc
+cifar.pyc
+check_base.pyc

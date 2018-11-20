@@ -7,23 +7,24 @@ import cifar
 
 class cifar_nn_test(cifar_check_base):
     
-    def __init(self,reader):
+    def __init(self,reader,batch=1):
         self.base = super(cifar_nn_test,self)
         self.base.__init__(reader)
+        self.batch=1
 
     def decl_predict(self):
-        batch = 1
-        x = self.decl_placeholder("x",[None,3072])
-        y_ = self.decl_placeholder("y_",[None,10])
-        h0 =  self.decl_full_conn_layer("hidden0",x,[3072,100],[100])
-        h1 =  self.decl_full_conn_layer("hidden1",h0,[100,100],[100])
-        h2 =  self.decl_full_conn_layer("hidden2",h1,[100,100],[100])
-        h3 =  self.decl_full_conn_layer("hidden3",h2,[100,100],[100])
-        h4 =  self.decl_full_conn_layer("hidden4",h3,[100,100],[100])
-        h5 =  self.decl_full_conn_layer("hidden5",h4,[100,100],[100])
-        y =  self.decl_full_conn_layer("y",h5,[100,10],[10],isActive=False)
-        loss = tf.nn.softmax(y)
-        return 1,loss,x, y_
+        x = self.placeholder("x",[None,3072])
+        y_ = self.placeholder("y_",[None,10])
+        net = self.linear(x,100)
+        net = self.linear(net,100)
+        net = self.linear(net,100)
+        net = self.linear(net,100)
+        net = self.linear(net,100)
+        net = self.linear(net,100)
+        net = self.linear(net,10,is_active=False)
+        y = tf.nn.softmax(net)
+        
+        return self.batch,y,x,y_
 
 if __name__ == "__main__":
     print("#"*30)

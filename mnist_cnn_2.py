@@ -16,15 +16,15 @@ class mnist_cnn_2(model_base):
         x = self.placeholder("x",[None,784])
         y_ = self.placeholder("y_",[None,10])
         net = tf.reshape(x,[-1,28,28,1])
-        net = self.conv2d(net,[3,3],32)
+        net = self.conv2d(net,[3,3],32,is_batch_normal=True)
         net = self.sub_sample(net)
-        net = self.conv2d(net,[3,3],64)
+        net = self.conv2d(net,[3,3],64,is_batch_normal=True)
         net = self.sub_sample(net)
         net = self.flat(net)
         net = self.linear(net,512)
-        y = self.linear(net,10,is_active=False)
+        y = self.linear(net,10,is_active=False,is_batch_normal=True)
 
-        loss = self.decl_softmax_corssentry_loss(y,y_)
+        loss = self.softmax_corssentry(y,y_)
         return self.batch,loss,x,y_,y,tf.train.AdamOptimizer()
 
 if __name__ == "__main__":

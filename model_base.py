@@ -31,11 +31,9 @@ class model_base(nn_base):
             merge_op = tf.summary.merge_all()
             segs = os.path.split(self.reader.checkpoints)
             writer = tf.summary.FileWriter(segs[0],sess.graph)
-
             accuracy = tf.reduce_mean(tf.cast( tf.equal(tf.argmax(y,1),tf.argmax(y_feed,1)), tf.float32))
-
+            
             m = self.reader
-            print("initialize all variables")
             init = tf.global_variables_initializer()
             sess.run(init)
             count = 0
@@ -44,9 +42,12 @@ class model_base(nn_base):
                 m.open()
                 while m.has():
                     batch_xs,batch_ys = m.next_datas(batch)
-                    feed = {x_feed:batch_xs,y_feed:batch_ys}
-                    _,l,acc,summary_str = sess.run([train_steps,loss,accuracy,merge_op],feed)
+                    is_training = self.is_training
+                    feed = {x_feed:batch_xs,y_feed:batch_ys,is_training:True}
+                    _,l,summary_str = sess.run([train_steps,loss,merge_op],feed)
                     count = count + 1
+                    feed = {x_feed:batch_xs,y_feed:batch_ys,is_training:False}
+                    acc = sess.run(accuracy,feed)
                     print(count,l,acc)
                     summary.append({"count":count,"loss":l,"accuracy":acc})
 

@@ -52,7 +52,7 @@ class cifar(data_reader):
         self.idx_cursor = edx
 
         for i in range(len (imgs) ):
-            imgs[i]  = imgs[i ] / 256.0
+            imgs[i]  = imgs[i ] / 255.0
       
         return (imgs,labels)
 
@@ -120,10 +120,6 @@ class cifar(data_reader):
 if __name__ == '__main__':
     cf = cifar('/home/lr/workspace/python/ai/data/cifar-10-batches-py/','')
     cf.open()
-    # while cf.has():
-    #     imgs,labels =  cf.next_datas(1000)
-    #     print(len(imgs),len(labels),len(imgs[0]),len(imgs[len(imgs)-1]),len(labels[0]))
-
 
     print("#"*30)
     cf = cifar('/home/lr/workspace/python/ai/data/cifar-10-batches-py/','',is_test=True)
