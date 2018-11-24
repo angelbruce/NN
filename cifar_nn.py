@@ -29,6 +29,6 @@ if __name__ == "__main__":
     print("#"*30)
     m = config.cifar_train_reader('cifar_nn')
     model = cifar_nn(m, batch=100)
-    model.plot(model.train(10, 0.001), "count", "loss", "accuracy")
+    model.train(1, 0.001)
 
 

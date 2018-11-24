@@ -48,7 +48,6 @@ class cifar(data_reader):
         if edx > self.total: edx = self.total
         imgs = self.datas[self.idx_cursor:edx ]
         labels = self.labels[self.idx_cursor:edx ]
-        # print(self.idx_cursor,edx,self.total)
         self.idx_cursor = edx
 
         for i in range(len (imgs) ):

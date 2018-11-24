@@ -29,5 +29,6 @@ class cifar_nn_test(cifar_check_base):
 if __name__ == "__main__":
     print("#"*30)
     m = cifar.cifar("/home/lr/workspace/python/ai/data/cifar-10-batches-py/","/home/lr/workspace/python/ai/model/cifar_nn/model.ckpt",is_test=True)
+    m = config.cifar_test_reader('cifar_nn')
     model = cifar_nn_test(m)
     model.check()

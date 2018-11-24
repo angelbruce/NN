@@ -9,15 +9,15 @@ class config(object):
     use_cudnn_on_gpu = True
 
     model_checkpoint_name = "model.ckpt"
-    model_checkpoint_base = "/home/abl-0810/ai/model/"
+    model_checkpoint_base = "/home/abl/workspace/python/model/"
 
 
-    mnist_train_traits = "/home/abl-0810/ai/data/mnist/train-images.idx3-ubyte"
-    mnist_train_labels = "/home/abl-0810/ai/data/mnist/train-labels.idx1-ubyte"
-    mnist_test_traits = "/home/abl-0810/ai/data/mnist/t10k-images.idx3-ubyte"
-    mnist_test_labels = "/home/abl-0810/ai/data/mnist/t10k-labels.idx1-ubyte"
+    mnist_train_traits = "/home/abl/workspace/python/data/mnist/train-images-idx3-ubyte"
+    mnist_train_labels = "/home/abl/workspace/python/data/mnist/train-labels-idx1-ubyte"
+    mnist_test_traits = "/home/abl/workspace/python/data/mnist/t10k-images-idx3-ubyte"
+    mnist_test_labels = "/home/abl/workspace/python/data/mnist/t10k-labels-idx1-ubyte"
 
-    cifar_data_path = "/home/abl-0810/ai/data/cifar/"
+    cifar_data_path = "/home/abl/workspace/python/data/cifar/"
     
 
     @staticmethod

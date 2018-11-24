@@ -14,11 +14,13 @@ class model_base(nn_base):
     def decl_model(self):
         pass
 
-    def train(self,epoch=1,learn_rate=0.001,log_dir=""):
+    def train(self,epoch=1,learn_rate=0.001,is_show_summary=True,save_mod=10):
         self.learn_rate = learn_rate
         batch,loss,x,y_,y,optimizer = self.decl_model()
         self.epoch = epoch
-        summary = self.train_model(batch,loss,x,y_,y,optimizer)
+        summary = self.train_model(batch,loss,x,y_,y,optimizer,save_mod=save_mod)
+        if is_show_summary:
+            self.plot(summary,"count","loss","accuracy")
         return summary
 
     def train_model(self,batch,loss,x_feed,y_feed,y,optimizer,save_mod=10):
@@ -50,11 +52,11 @@ class model_base(nn_base):
                     acc = sess.run(accuracy,feed)
                     print(count,l,acc)
                     summary.append({"count":count,"loss":l,"accuracy":acc})
+                    writer.add_summary(summary_str,count)
 
-                    if count % save_mod == 0 and m.checkpoints:
-                        saver = tf.train.Saver()
-                        saver.save(sess,m.checkpoints,count)
-                        writer.add_summary(summary_str,count)
+                if (e+1) % save_mod == 0 and m.checkpoints:
+                    saver = tf.train.Saver()
+                    saver.save(sess,m.checkpoints,count)
 
                 m.close()
                 e = e + 1
@@ -75,3 +77,4 @@ class model_base(nn_base):
             plt.title(y)
             plt.plot(xs,ys)
         plt.show()
+        plt.close()

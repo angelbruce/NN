@@ -14,7 +14,7 @@ class mnist_cnn_2(model_base):
 
     def decl_model(self):
         x = self.placeholder("x",[None,784])
-        y_ = self.placeholder("y_",[None,10])
+        y_ = self.placeholder("y_",[None,10])   
         net = tf.reshape(x,[-1,28,28,1])
         net = self.conv2d(net,[3,3],32,is_batch_normal=True)
         net = self.sub_sample(net)

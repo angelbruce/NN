@@ -138,7 +138,7 @@ class nn_base(object):
     def placeholder(self,name,shape):
         return self.decl_placeholder(name,shape)
 
-    def conv2d(self,x,kernel,outdim,name="conv2d",strides=1,padding='SAME',weight_mean=0.0,weight_stddev=0.1,is_batch_normal=False,is_active=True,is_all=False,active_op=tf.nn.relu,is_dropout=False,keep_prob=0.5):
+    def conv2d(self,x,kernel,outdim,name="conv2d",strides=1,padding='SAME',weight_mean=0.0,weight_stddev=0.1,is_batch_normal=False,is_active=True,is_all=False,active_op=tf.nn.relu,keep_prob=1.0):
         if padding == 'S' : padding = 'SAME'
         elif padding == 'V' : padding = 'VALID'
         strides = [1,strides,strides,1]
@@ -150,7 +150,8 @@ class nn_base(object):
             b = self.decl_bias(bias_shape)
             z = tf.nn.bias_add(tf.nn.conv2d(x,w,strides,padding) , b)
             tf.summary.histogram("conv2d",z)
-            if is_dropout:
+            if keep_prob!=1.0:
+                z = tf.cond(self.is_training,lambda: tf.nn.dropout(z,keep_prob),lambda:z)
                 z = tf.nn.dropout(z,keep_prob)
                 tf.summary.histogram("dropout",z)
 
@@ -201,8 +202,8 @@ class nn_base(object):
     def sub_sample(self,x,name='sub_sample',strides=2,padding='VALID',pool_op=tf.nn.max_pool):
         if padding == 'S' : padding = 'SAME'
         elif padding == 'V' : padding = 'VALID'
-        strides = [1,strides,strides,1]
         ksize=[1,strides,strides,1]
+        strides = [1,strides,strides,1]
 
         if pool_op == tf.nn.max_pool: name=name + '_max_pool'
         elif pool_op == tf.nn.avg_pool: name=name + '_avg_pool'
@@ -214,7 +215,7 @@ class nn_base(object):
         return x
 
 
-    def linear(self,x,outdim,name="linear",weight_mean=0.0,weight_stddev=0.1,is_batch_normal=False,is_active=True,is_all=False,active_op=tf.nn.relu,is_dropout=False,keep_prob=0.5):
+    def linear(self,x,outdim,name="linear",weight_mean=0.0,weight_stddev=0.1,is_batch_normal=False,is_active=True,is_all=False,active_op=tf.nn.relu,keep_prob=1.0):
         name = name + "_" + str(x.shape[-1].value) + "x" + str(outdim) 
         with tf.name_scope(name):
             weight_shape = [x.shape[-1].value,outdim]
@@ -223,8 +224,8 @@ class nn_base(object):
             b = self.decl_bias(bias_shape)
             z = tf.nn.bias_add(tf.matmul(x,w) , b)
             tf.summary.histogram("matmul",z)
-            if is_dropout:
-                z = tf.nn.dropout(z,keep_prob)
+            if keep_prob!=1.0:
+                z = tf.cond(self.is_training,lambda: tf.nn.dropout(z,keep_prob),lambda:z)
                 tf.summary.histogram("dropout",z)
 
             if is_batch_normal:

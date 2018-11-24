@@ -28,6 +28,6 @@ class mnist_cnn_test_1(check_base):
 
 if __name__ == "__main__":
     print("#"*30)
-    m = mnist.mnist("/home/lr/workspace/python/ai/data/t10k-images.idx3-ubyte","/home/lr/workspace/python/ai/data/t10k-labels.idx1-ubyte","/home/lr/workspace/python/ai/model/mnist_cnn_1/model.ckpt")
+    m = config.mnist_test_reader('mnist_cnn_2')
     model = mnist_cnn_test_1(m)
     model.check()
